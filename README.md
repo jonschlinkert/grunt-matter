@@ -1,8 +1,8 @@
 # grunt-matter [![NPM version](https://badge.fury.io/js/grunt-matter.png)](http://badge.fury.io/js/grunt-matter)  [![Build Status](https://travis-ci.org/assemble/grunt-matter.png)](https://travis-ci.org/assemble/grunt-matter)
 
-> Add, extend, sort or strip YAML front matter. Also has options for populating randomized mock data.
+> Add, extend, sort or strip YAML front matter. Also has options for populating randomized mock data. This plugin is especially useful for creating test or example templates.
 
-Visit [Assemble's documentation](http://assemble.io) for many more examples and pointers on getting started.
+This plugin is useful for adding or extending YAML front matter in general, but it was created to make it easier to create and update templates for tests and boilerplates. 
 
 ## Getting Started
 #### Overview

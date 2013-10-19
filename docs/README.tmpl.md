@@ -5,7 +5,7 @@ username: jonschlinkert
 
 > {%= description %}
 
-Visit [Assemble's documentation](http://assemble.io) for many more examples and pointers on getting started.
+This plugin is useful for adding or extending YAML front matter in general, but it was created to make it easier to create and update templates for tests and boilerplates. 
 
 ## Getting Started
 {%= _.doc('quickstart.md') %}
