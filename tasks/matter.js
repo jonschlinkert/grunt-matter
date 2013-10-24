@@ -8,9 +8,11 @@
 
 'use strict';
 
+var path = require('path');
 // node_modules
 var datafixtures = require('datafixture.js');
 var yfm = require('assemble-yaml');
+var frep   = require('frep');
 
 module.exports = function (grunt) {
 
@@ -31,15 +33,17 @@ module.exports = function (grunt) {
         }
       });
 
-      var mockData = datafixtures.generate(options.mock || {}, 0);
-      options.props = _.extend({}, mockData, options.props);
-
       src.map(function (file) {
+
+        var mockData = datafixtures.generate(options.mock || {}, 0);
+        options.props = _.extend({}, mockData, options.props);
+        options.props.title = _.titleize(path.basename(String(src), path.extname(src))).replace(/-/g, ' ').replace(/ \d/g, '');
+
+        if(options.props && _.isObject(options.props)) {
+          grunt.file.write(f.dest, yfm.extend(file, options).replace(/^\s*/, '').replace(/(---)\s*/g, '$1\n'));
+        }
         if(options.strip) {
           grunt.file.write(f.dest, yfm.strip(file).replace(/^\s*/, ''));
-        }
-        if(options.props && _.isObject(options.props)) {
-          grunt.file.write(f.dest, yfm.extend(file, options));
         }
         if (file.length < 1) {
           grunt.log.warn('Destination not written because file was empty.');
@@ -49,7 +53,5 @@ module.exports = function (grunt) {
       });
 
     });
-
   });
-
 };
