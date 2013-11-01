@@ -1,6 +1,6 @@
 {
   "name": "grunt-matter",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "Add, extend, sort or strip YAML front matter. Also has options for populating randomized mock data. This plugin is especially useful for creating test or example templates.",
   "author": {
     "name": "Jon Schlinkert",
@@ -36,7 +36,8 @@
   },
   "dependencies": {
     "assemble-yaml": "~0.2.0",
-    "datafixture.js": "~0.1.3"
+    "datafixture.js": "~0.1.3",
+    "frep": "~0.1.2"
   },
   "devDependencies": {
     "chai": "~1.7.2",
