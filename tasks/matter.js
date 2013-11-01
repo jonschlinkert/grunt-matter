@@ -9,21 +9,29 @@
 'use strict';
 
 var path = require('path');
+
 // node_modules
 var datafixtures = require('datafixture.js');
 var yfm = require('assemble-yaml');
-var frep   = require('frep');
+var frep = require('frep');
+
 
 module.exports = function (grunt) {
 
+  // Grunt utils.
   var _ = grunt.util._;
+  var async = grunt.util.async;
+
 
   grunt.registerMultiTask('matter', 'Add, extend, sort or strip YAML front matter.', function () {
-
+    var done = this.async();
     var options = this.options({});
 
-    this.files.forEach(function (f) {
-      var src = f.src.filter(function (filepath) {
+    var mockData = datafixtures.generate(options.mock || {}, 0);
+
+    this.files.forEach(function (fp) {
+
+      var src = fp.src.filter(function (filepath) {
         // Warn on and remove invalid source files (if nonull was set).
         if (!grunt.file.exists(filepath)) {
           grunt.log.warn('Source file "' + filepath + '" not found.');
@@ -33,25 +41,29 @@ module.exports = function (grunt) {
         }
       });
 
-      src.map(function (file) {
+      async.forEach(src, function (src, next) {
 
-        var mockData = datafixtures.generate(options.mock || {}, 0);
-        options.props = _.extend({}, mockData, options.props);
-        options.props.title = _.titleize(path.basename(String(src), path.extname(src))).replace(/-/g, ' ').replace(/ \d/g, '');
+        options.props = _.extend({}, mockData, options.props) || {};
+        options.props.name = path.basename(String(src), path.extname(src));
+        options.props.dirname = path.basename(path.dirname(String(src)));
 
-        if(options.props && _.isObject(options.props)) {
-          grunt.file.write(f.dest, yfm.extend(file, options).replace(/^\s*/, '').replace(/(---)\s*/g, '$1\n'));
+        var context = yfm.extend(src, options);
+
+        if (options.props && _.isObject(options.props)) {
+          grunt.file.write(fp.dest, context.replace(/^\s*/, '').replace(/(---)\s*/g, '$1\n'));
         }
-        if(options.strip) {
-          grunt.file.write(f.dest, yfm.strip(file).replace(/^\s*/, ''));
+        if (options.strip) {
+          grunt.file.write(fp.dest, yfm.strip(src).replace(/^\s*/, ''));
         }
-        if (file.length < 1) {
-          grunt.log.warn('Destination not written because file was empty.');
+        if (src.length < 1) {
+          grunt.log.warn('Destination was not written because file was empty.');
         } else {
-          grunt.log.ok('File '.yellow + f.dest + ' was updated.');
+          grunt.log.ok('File '.yellow + fp.dest + ' was updated.');
         }
+        next();
       });
-
     });
+    done();
+
   });
 };
